@@ -1,14 +1,17 @@
 const Atendimento = require('../models/Atendimento');
 
 class AtendimentoRepository {
+    
     async findAll() {
         const atendimento = await Atendimento.find();
-
         return atendimento;
     }
 
     async findById(id) {
         const atendimento = await Atendimento.findById(id);
+        if (!atendimento) {
+            return res.status(404).json({message:"atendimento não encontrado"})
+        }
 
         return atendimento;
     }
