@@ -41,7 +41,7 @@ class PacienteRepository {
     }
 
     async deleteByCpf(cpf){
-        const paciente = Paciente.findOne({ cpf });
+        const paciente = await Paciente.findOne({ cpf });
         const resultado = await Paciente.findByIdAndDelete(paciente._id);
         
         return resultado;
