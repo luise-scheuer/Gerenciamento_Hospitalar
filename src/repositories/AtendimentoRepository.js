@@ -9,30 +9,30 @@ class AtendimentoRepository {
 
     async findById(id) {
         const atendimento = await Atendimento.findById(id);
-        if (!atendimento) {
-            return res.status(404).json({message:"atendimento não encontrado"})
-        }
-
         return atendimento;
     }
 
-    async create(dados) {
-        try {
-            const novoAtendimento = new Profissional(dados);
-            const atendimentoSalvo = await novoAtendimento.save();
-            res.status(201).json(atendimentoSalvo);
-        } catch (error) {
-            console.log("Erro ao criar atendimento:", error)
-            res.status(500).json({ message: "Erro ao criar atendimento", error: error.message });
-        }
+    async create({ paciente, profissional, especialidade, dataAtendimento, horaAtendimento }) {
+        const novoAtendimento = new Atendimento({
+            paciente, profissional, especialidade, dataAtendimento, horaAtendimento
+        });
+        
+        await novoAtendimento.save();
+        return novoAtendimento;
     }
 
-    async update() {
-
+    async update(id, { paciente, profissional, especialidade, dataAtendimento, horaAtendimento }) {
+        const atendimentoAtualizado = await Atendimento.findByIdAndUpdate(
+            id,
+            { paciente, profissional, especialidade, dataAtendimento, horaAtendimento },
+            { new: true }
+        );
+        return atendimentoAtualizado;
     }
 
-    async delete() {
-
+    async delete(id) {
+        const atendimento = await Atendimento.findByIdAndDelete(id);
+        return atendimento;
     }
 }
 
