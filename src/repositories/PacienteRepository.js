@@ -12,7 +12,7 @@ class PacienteRepository {
         return paciente;
     }
 
-    async findByCPF(cpf) {
+    async findByCpf(cpf) {
         const paciente = await Paciente.findOne({ cpf });
         return paciente;
     }
@@ -37,6 +37,13 @@ class PacienteRepository {
 
     async delete(id) {
         const resultado = await Paciente.findByIdAndDelete(id);
+        return resultado;
+    }
+
+    async deleteByCpf(cpf){
+        const paciente = await Paciente.findOne({ cpf });
+        const resultado = await Paciente.findByIdAndDelete(paciente._id);
+        
         return resultado;
     }
 }

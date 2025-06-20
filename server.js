@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
+//const path = require('path');
 const routes = require('./src/routes'); // IMPORTANTO O ARQUIVO DE ROTAS
 
 const app = express();
