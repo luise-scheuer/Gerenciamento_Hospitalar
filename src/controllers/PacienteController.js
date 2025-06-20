@@ -1,6 +1,7 @@
 const PacienteRepository = require("../repositories/PacienteRepository");
 
 class PacienteController {
+    //Busca todos
     async index(req, res) {
         const pacientes = await PacienteRepository.findAll();
 
@@ -11,6 +12,7 @@ class PacienteController {
         res.json(pacientes);
     }
 
+    //Busca específico por ID -> criado por padrão, não será implementado no front-end
     async show(req, res) {
         const { id } = req.params;
         const paciente = await PacienteRepository.findById(id);
@@ -22,6 +24,7 @@ class PacienteController {
         res.json(paciente);
     }
 
+    //Busca específico por CPF -> será implementado no front-end
     async showByCpf(req, res) {
         const { cpf } = req.params;
         const paciente = await PacienteRepository.findByCpf(cpf);
@@ -33,19 +36,12 @@ class PacienteController {
         res.json(paciente);
     }
 
+    //Criar um cadastro
     async store(req, res) {
         const { nome, cpf, dataNascimento, endereco, telefone } = req.body;
 
-        if(!nome){
-            return response.status(400).json({ error: "Nome é obrigatório!" });
-        }
-
-        if(!cpf){
-            return response.status(400).json({ error: "CPF é obrigatório!" });
-        }
-
-        if(!dataNascimento){
-            return response.status(400).json({ error: "Data de Nascimento é obrigatório!" });
+        if(!nome || !cpf || !dataNascimento || !endereco || !telefone){
+            return response.status(400).json({ error: "Preencha todos os campos!!!" });
         }
 
         if(cpf) {
@@ -57,12 +53,13 @@ class PacienteController {
         }
 
         const paciente = await PacienteRepository.create({
-            nome, cpf, dataNascimento, endereco: endereco || null , telefone: telefone || null
+            nome, cpf, dataNascimento, endereco, telefone
         })
 
         res.status(201).json(paciente);
     }
 
+    //Atualizar por ID -> criado por padrão, não será implementado no front-end
     async update(req, res) {
         const { id } = req.params;
         const { nome, cpf, dataNascimento, endereco, telefone } = req.body;
@@ -76,7 +73,7 @@ class PacienteController {
             const pacienteCpf = await PacienteRepository.findByCPF(cpf);
 
             if(pacienteCpf) {
-                return response.status(400).json({ error: "Esse CPF já está cadastrado!" });
+                return res.status(400).json({ error: "Esse CPF já está cadastrado em outro paciente!" });
             }
         }
 
@@ -90,8 +87,37 @@ class PacienteController {
 
         res.status(200).json(pacienteAtualizado);
     }
+    
+    //Atualizar por CPF -> será implementado no front-end
+    async updateByCpf(req, res) {
+        const { cpf } = req.params;
+        const { nome, novoCpf, dataNascimento, endereco, telefone } = req.body;
 
-    //verificar/adicionar exclusão por CPF
+        const paciente = await PacienteRepository.findById(cpf);
+        if(!paciente) {
+            return res.status(404).json({ error: "Paciente não encontrado!!!"})
+        }
+
+        if(novoCpf && novoCpf !== paciente.cpf) {
+            const pacienteCpf = await PacienteRepository.findByCPF(cpf);
+
+            if(pacienteCpf) {
+                return res.status(400).json({ error: "Esse CPF já está cadastrado em outro paciente!" });
+            }
+        }
+
+        const pacienteAtualizado = await PacienteRepository.update(paciente._id, {
+            nome: nome ?? paciente.nome,
+            cpf: cpf ?? paciente.cpf,
+            dataNascimento: dataNascimento ?? paciente.dataNascimento,
+            endereco: endereco ?? paciente.endereco,
+            telefone: telefone ?? paciente.telefone
+        });
+
+        res.status(200).json(pacienteAtualizado);
+    }
+    
+    // Deletar por ID -> criado por padrão, não será implementado no front-end
     async destroy(req, res) {
         const { id } = req.params;
 
@@ -100,6 +126,18 @@ class PacienteController {
         }
 
         await PacienteRepository.delete(id);
+        res.sendStatus(204);
+    }
+    
+    // Deletar por CPF -> será implementado no front-end
+    async destroyByCPF(req, res) {
+        const { cpf } = req.params;
+
+        if(!cpf){
+            return res.status(400).json({ error: "CPF de Paciente inválido!!!"});
+        }
+
+        await PacienteRepository.deleteByCpf(cpf);
         res.sendStatus(204);
     }
 }
