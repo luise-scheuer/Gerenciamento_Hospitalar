@@ -45,20 +45,20 @@ class PacienteController {
         const { nome, cpf, dataNascimento, endereco, telefone } = req.body;
 
         if(!nome || !cpf || !dataNascimento || !endereco || !telefone){
-            return response.status(400).json({ error: "Preencha todos os campos!!!" });
+            return res.status(400).json({ error: "Preencha todos os campos!!!" });
         }
 
         if(cpf) {
             const pacienteCpf = await PacienteRepository.findByCpf(cpf);
 
             if(pacienteCpf) {
-                return response.status(400).json({ error: "Esse CPF já está cadastrado!!!" });
+                return res.status(400).json({ error: "Esse CPF já está cadastrado!!!" });
             }
         }
 
         const paciente = await PacienteRepository.create({
             nome, cpf, dataNascimento, endereco, telefone
-        })
+        });
 
         res.status(201).json(paciente);
     }
