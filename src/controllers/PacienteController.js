@@ -91,8 +91,16 @@ class PacienteController {
         res.status(200).json(pacienteAtualizado);
     }
 
+    //verificar/adicionar exclusão por CPF
     async destroy(req, res) {
+        const { id } = req.params;
 
+        if(!id){
+            return res.status(400).json({ error: "ID de Paciente inválido!!!"});
+        }
+
+        await PacienteRepository.delete(id);
+        res.sendStatus(204);
     }
 }
 
