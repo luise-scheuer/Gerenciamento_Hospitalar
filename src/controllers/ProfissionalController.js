@@ -2,7 +2,7 @@
 
 class ProfissionalController {
     index(req, res){
-        
+        const profissional = await
     }
     
     show(req, res){

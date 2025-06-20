@@ -1,15 +1,14 @@
 const Especialidade = require('../models/Especialidade');
 
 class EspecialidadeRepository {
+    
     async findAll() {
         const especialidade = await Especialidade.find();
-
         return especialidade;
     }
 
     async findById(id) {
         const especialidade = await Especialidade.findById(id);
-
         return especialidade;
     }
 
