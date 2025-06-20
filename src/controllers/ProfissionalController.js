@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ProfissionalRepository = require("../repositories/ProfissonalRepository");
 
 class ProfissionalController {

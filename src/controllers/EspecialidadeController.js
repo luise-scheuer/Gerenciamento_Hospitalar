@@ -1,25 +1,77 @@
-
+const mongoose = require('mongoose');
+const EspecialidadeRepository = require("../repositories/EspecialidadeRepository");
 
 class EspecialidadeController {
-    index(req, res){
-        
-    }
-    
-    show(req, res){
+    //Busca todos
+    async index(req, res) {
+        const especialidade = await EspecialidadeRepository.findAll();
 
+        if (!especialidade) {
+            return res.status(400).json({ error: "Especialidade não encontrada" });
+        }
+        res.json(especialidade);
     }
-    
-    store(req, res){
+    //Busca específico por ID -> criado por padrão, não será implementado no front-end
+    async show(req, res) {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "ID Invalido" })
+        }
 
+        const especialidade = await EspecialidadeRepository.findById(id);
+        if (!especialidade) {
+            return res.status(404).json({ message: "Especialidade com esse ID não encontrado" });
+        }
+        res.json(especialidade);
     }
-    
-    update(req, res){
 
+    //Criar um cadastro
+    async store(req, res) {
+        const { area } = req.body;
+        if (!area) {
+            return res.status(400).json({ error: "Preencha os campos!" });
+        }
+        const especialidade = await EspecialidadeRepository.create({
+            area
+        })
+        res.status(201).json(especialidade);
     }
-    
-    destroy(req, res){
 
+    //Atualizar por ID -> criado por padrão, não será implementado no front-end
+    async update(req, res) {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "ID inválido!!!" });
+        }
+
+        const { area } = req.body;
+        const especialidade = await EspecialidadeRepository.findById(id);
+        if (!especialidade) {
+            return res.status(404).json({ error: "Especialidade não encontrada!!!" })
+        }
+
+        if (area) {
+            const especialidadeArea = await EspecialidadeRepository.findByCpf(area);
+
+            if (especialidadeArea) {
+                return res.status(400).json({ error: "Essa AREA já está cadastrada!!!" });
+            }
+        }
+    }
+    // Deletar por ID -> criado por padrão, não será implementado no front-end
+    async destroy(req, res) {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "ID inválido!!!" });
+        }
+
+        if (!id) {
+            return res.status(400).json({ error: "ID de Paciente inválido!!!" });
+        }
+
+        await EspecialidadeRepository.delete(id);
+        res.sendStatus(204);
     }
 }
 
-module.exports = new EspecialidadeController();
+module.exports = new EspecialidadeRepository();
