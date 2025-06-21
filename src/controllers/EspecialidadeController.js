@@ -4,24 +4,26 @@ const EspecialidadeRepository = require("../repositories/EspecialidadeRepository
 class EspecialidadeController {
     //Busca todos
     async index(req, res) {
-        const especialidade = await EspecialidadeRepository.findAll();
+        const especialidades = await EspecialidadeRepository.findAll();
 
-        if (!especialidade) {
-            return res.status(400).json({ error: "Especialidade não encontrada" });
+        if (!especialidades) {
+            return res.status(400).json({ error: "Especialidades não encontradas!!!" });
         }
-        res.json(especialidade);
+        res.json(especialidades);
     }
-    //Busca específico por ID -> criado por padrão, não será implementado no front-end
+    
+    //Busca por ID
     async show(req, res) {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ error: "ID Invalido" })
+            return res.status(400).json({ error: "ID Inválido!!!" })
         }
 
         const especialidade = await EspecialidadeRepository.findById(id);
         if (!especialidade) {
-            return res.status(404).json({ message: "Especialidade com esse ID não encontrado" });
+            return res.status(404).json({ message: "Especialidade com esse ID não encontrada!!!" });
         }
+
         res.json(especialidade);
     }
 
@@ -29,7 +31,7 @@ class EspecialidadeController {
     async store(req, res) {
         const { area } = req.body;
         if (!area) {
-            return res.status(400).json({ error: "Preencha os campos!" });
+            return res.status(400).json({ error: "Preencha o campo!!!" });
         }
         const especialidade = await EspecialidadeRepository.create({
             area
@@ -37,7 +39,7 @@ class EspecialidadeController {
         res.status(201).json(especialidade);
     }
 
-    //Atualizar por ID -> criado por padrão, não será implementado no front-end
+    //Atualizar por ID
     async update(req, res) {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -58,7 +60,8 @@ class EspecialidadeController {
             }
         }
     }
-    // Deletar por ID -> criado por padrão, não será implementado no front-end
+    
+    // Deletar por ID
     async destroy(req, res) {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -74,4 +77,4 @@ class EspecialidadeController {
     }
 }
 
-module.exports = new EspecialidadeRepository();
+module.exports = new EspecialidadeController();
